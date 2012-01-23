@@ -10,7 +10,7 @@ Ext.application({
                 {name: 'type', type: 'string'},    
                 {name: 'distance', type: 'string'},    
                 {name: 'minutes', type: 'int'},  
-                {name: 'comments', type: 'text'}
+                {name: 'comments', type: 'string'}
             ]
         });
         
