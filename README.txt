@@ -1,0 +1,1 @@
+Sample code for Introduction to Sencha Touch http://blog.chariotsolutions.com/2012/01/introduction-to-sencha-touch.html
