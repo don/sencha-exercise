@@ -4,7 +4,7 @@ Ext.application({
         
         Ext.define("Activity", {
             extend: "Ext.data.Model",
-            config: {
+            //config: {
                 fields: [
                     {name: 'id', type: 'int'},                        
                     {name: 'date', type: 'date'},    
@@ -13,7 +13,7 @@ Ext.application({
                     {name: 'minutes', type: 'int'},  
                     {name: 'comments', type: 'string'}
                 ]
-            }
+            //}
         });
         
         var store = Ext.create('Ext.data.Store', {
@@ -26,7 +26,13 @@ Ext.application({
             autoLoad: true
         }); 
 
-        var template = Ext.XTemplate.from(Ext.get('detail-template'));
+        var template = new Ext.Template('<div>' +
+            'Date: {date:date("m/d/Y")} <br/>' +
+            'Type: {type} <br/>' +
+            'Distance: {distance} <br/>' +
+            'Time: {minutes} minutes <br/>' +
+            'Comment:' +
+        '</div>');
 
         var onNavigationPop = function(v, item) {
             v.down('#addButton').show();
