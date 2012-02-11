@@ -4,14 +4,16 @@ Ext.application({
         
         Ext.define("Activity", {
             extend: "Ext.data.Model",
-            fields: [
-                {name: 'id', type: 'int'},                        
-                {name: 'date', type: 'date'},    
-                {name: 'type', type: 'string'},    
-                {name: 'distance', type: 'string'},    
-                {name: 'minutes', type: 'int'},  
-                {name: 'comments', type: 'string'}
-            ]
+            config: {
+                fields: [
+                    {name: 'id', type: 'int'},                        
+                    {name: 'date', type: 'date'},    
+                    {name: 'type', type: 'string'},    
+                    {name: 'distance', type: 'string'},    
+                    {name: 'minutes', type: 'int'},  
+                    {name: 'comments', type: 'string'}
+                ]
+            }
         });
         
         var store = Ext.create('Ext.data.Store', {
@@ -23,6 +25,13 @@ Ext.application({
             },
             autoLoad: true
         }); 
+
+        var template = Ext.XTemplate.from(Ext.get('detail-template'));
+
+        var onNavigationPop = function(v, item) {
+            v.down('#addButton').show();
+            v.down('#saveButton').hide();
+        };
                         
        var view = Ext.create("Ext.NavigationView", {
             fullscreen: true,
@@ -30,32 +39,95 @@ Ext.application({
                 {
                     xtype: 'list',
                     title: 'Activities',
-                    //itemTpl: '{date} - {type}',
                     itemTpl: '{date:date("m/d/Y")} - {type}',
-                    store: store
+                    store: store,
+                    onItemDisclosure: function (record, btn, index) {
+                        view.down('#addButton').hide();
+                        view.push({
+                            xtype: 'panel',
+                            title: 'Activity',
+                            html: template.apply(record.data),
+                            styleHtmlContent: true
+                        });
+                    }                    
                 }
+            ],
+            listeners: {
+                pop: onNavigationPop
+            }
+        });
+        
+        var form = Ext.create('Ext.form.Panel', {
+            title: "Activity",
+            items: [
+                {
+                    xtype: 'datepickerfield',
+                    name: 'date',
+                    label: 'Date',
+                    value: new Date()
+                },
+                { 
+                    xtype: 'selectfield',
+                    name: 'type',
+                    label: 'Type', 
+                    options: [ 
+                        { text: "" },                    
+                        { text: "Run", value: "Run" },
+                        { text: "Bike", value: "Bike" },
+                        { text: "Swim", value: "Swim" },
+                        { text: "Walk", value: "Walk" }
+                    ]
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'distance',
+                    label: 'Distance'
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'minutes',
+                    label: 'Minutes'
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'comments',
+                    label: 'Comments'
+                }            
             ]
         });
         
         var addNewRow = function() {
-            // future versions should display a form for adding a record
-            var fakeRecord = Ext.create('Activity', {
-                date: new Date(), 
-                type: 'Walk', 
-                distance: '2 miles', 
-                minutes: 28, 
-                comments: 'Auto generated record.'
-            });
-        
-            store.add(fakeRecord);
+            form.reset();
+            view.down('#addButton').hide();
+            view.down('#saveButton').show();
+            view.push(form);            
         };
-                
-        view.getNavigationBar().add({
-            xtype: 'button',
-            text: 'Add',
-            align: 'right',
-            handler: addNewRow
-        });
+
+        var save = function() {
+            var record = Ext.create('Activity', form.getValues());
+            store.add(record); 
+            // TODO validation and error handling                     
+            view.pop();
+        };
         
+        view.getNavigationBar().add([
+            {
+                xtype: 'button',
+                id: 'addButton',
+                text: 'Add',
+                align: 'right',
+                handler: addNewRow
+            },
+            {
+                xtype: 'button',
+                id: 'saveButton',                
+                text: 'Save',
+                align: 'right',
+                handler: save,
+                hidden: true
+            }
+        ]);
+           
+        // Ext.Viewport.add(view);
     }
 });
