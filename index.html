@@ -3,8 +3,19 @@
 <head>
     <title>Exercise</title>
     <link rel="stylesheet" href="touch/resources/css/sencha-touch.css" type="text/css">
-    <script type="text/javascript" src="touch/sencha-touch-all.js"></script>
+    <script type="text/javascript" src="touch/sencha-touch-all-debug.js"></script>
     <script type="text/javascript" src="app.js"></script>
 </head>
-<body></body>
+<body onload="setTimeout(function() { window.scrollTo(0, 1) }, 1000);">
+  <textarea id="detail-template" style="display:none">
+    <div>
+      Date: {date:date("m/d/Y")} <br/>
+      Type: {type} <br/>
+      Distance: {distance} <br/>
+      Time: {minutes} minutes <br/> <!-- TODO make data more consistent -->
+      Notes: {comments} <br/>
+    </div>    
+  </textarea>
+  
+</body>
 </html>
